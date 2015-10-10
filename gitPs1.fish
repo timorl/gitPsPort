@@ -132,10 +132,43 @@ end
 
 function __git_ps1_show_upstream
 	set gitShowUpstream (git config bash.showUpstream ^/dev/null) #Only support auto and verbose for now, no multiple arguments.
-	if [ -z "$gitShowUpstream" ]
-		set gitShowUpstream 'auto'
+	if [ -n "$gitShowUpstream" ]
+		set -l counts (git rev-list --count --left-right '@{upstream}'...HEAD ^/dev/null)
+		if [ -n "$counts" ]
+			set -l behind (echo $counts | sed 's/\t[0-9]*$//')
+			set -l ahead (echo $counts | sed 's/^[0-9]*\t//')
+			switch "$gitShowUpstream"
+				case auto
+					if [ "$behind" = "0" ]
+						if [ "$ahead" = "0" ]
+							echo "="
+						else
+							echo ">"
+						end
+					else
+						if [ "$ahead" = "0" ]
+							echo "<"
+						else
+							echo "<>"
+						end
+					end
+				case verbose
+					if [ "$behind" = "0" ]
+						if [ "$ahead" = "0" ]
+							echo " u="
+						else
+							echo " u+$ahead"
+						end
+					else
+						if [ "$ahead" = "0" ]
+							echo " u-$behind"
+						else
+							echo " u+$ahead-$behind"
+						end
+					end
+			end
+		end
 	end
-	#TODO:Actually write this.
 end
 
 function __git_ps1
@@ -183,7 +216,7 @@ function __git_ps1
 				set gitStateString "$gitStateSeparator$gitStateString"
 			end
 
-			echo "$gitPrefix$gitBranch$gitStateString$gitRebaseString"
+			echo "$gitPrefix$gitBranch$gitStateString$gitRebaseString$gitUpstreamString"
 		end
 	end
 end
