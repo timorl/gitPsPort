@@ -77,13 +77,13 @@ function __git_ps1_branch
 		set branch (echo "$head"|sed "s/ref: //")
 		if [ "$head" = "$branch" ]
 			if [ "$gitDescribeStyle" = "contains" ]
-				set branch (git describe --contains HEAD ^/dev/null)
+				set branch (git describe --contains HEAD ^/dev/null)
 			else if [ "$gitDescribeStyle" = "branch" ]
-				set branch (git describe --contains --all HEAD ^/dev/null)
+				set branch (git describe --contains --all HEAD ^/dev/null)
 			else if [ "$gitDescribeStyle" = "describe" ]
-				set branch (git describe HEAD ^/dev/null)
+				set branch (git describe HEAD ^/dev/null)
 			else
-				set branch (git describe --tags --exact-match HEAD ^/dev/null)
+				set branch (git describe --tags --exact-match HEAD ^/dev/null)
 			end
 
 			if [ -z "$branch" ]
